@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<application xmlns="http://ns.adobe.com/air/application/3.8">
+<id>domainname.hello</id>
+<name>Hello World</name>
+<versionNumber>2015.01.14</versionNumber>
+<filename>Helloworld</filename> 
+<initialWindow>
+	<content>hello.swf</content>
+	<renderMode>direct</renderMode>
+	<autoOrients>false</autoOrients>
+	<aspectRatio>landscape</aspectRatio>
+</initialWindow>
+</application>
