@@ -1,15 +1,13 @@
-FLEX_SDK=
-
-APP=hello
+FLEX_SDK=C:/FlexSDK
+APP=Minimalist
 APP_XML=$(APP).xml
 ADL=$(FLEX_SDK)/bin/adl
 AMXMLC=$(FLEX_SDK)/bin/amxmlc
-SOURCES=src/Startup.hx
+SOURCES=src/Startup.hx src/Root.hx
 
 all: $(APP).swf
 
 $(APP).swf: $(SOURCES)
-
 	haxe \
 	-cp src \
 	-cp vendor \
@@ -18,9 +16,9 @@ $(APP).swf: $(SOURCES)
 	-main Startup \
 	-swf $(APP).swf \
 	-swf-lib vendor/starling.swc --macro "patchTypes('vendor/starling.patch')"
-	
+
 clean:
-	rm -rf $(APP).swf
-	
+	del $(APP).swf
+
 test: $(APP).swf
 	$(ADL) -profile tv -screensize 640x240:640x240 $(APP_XML)

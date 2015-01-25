@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalong="no"?>
+<application xmlns="http://ns.adobe.com/air/application/3.8">
+	<id>com.Stuff.Minimalist</id>
+	<name>Minimalist Project</name>
+	<versionNumber>1</versionNumber>
+	<filename>Minimalist.swf</filename>
+	<initialWindow>
+		<content>Minimalist.swf</content>
+		<rendermode>direct</rendermode>
+		<autoOrients>false</autoOrients>
+		<aspectRatio>landscape</aspectRatio>
+	</initialWindow>
+</application>

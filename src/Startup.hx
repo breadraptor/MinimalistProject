@@ -13,10 +13,13 @@ class Startup extends Sprite {
 
 	// have to type loadingBitmap as Bitmap because haxe can't tell from context
 	public var loadingBitmap:Bitmap;
-
+	public var startup:Sprite;
+	
 	// constructor
 	function new() {
 		super();
+		startup=this;
+
 		loadingBitmap = new Bitmap(new LoadingBitmapData(0, 0));
 		loadingBitmap.x = 0; // upper left hand corner in flash coords.
 		loadingBitmap.y = 0;
