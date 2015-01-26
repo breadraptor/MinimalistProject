@@ -6,7 +6,7 @@
 	<filename>Minimalist.swf</filename>
 	<initialWindow>
 		<content>Minimalist.swf</content>
-		<rendermode>direct</rendermode>
+		<renderMode>direct</renderMode>
 		<autoOrients>false</autoOrients>
 		<aspectRatio>landscape</aspectRatio>
 	</initialWindow>
