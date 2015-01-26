@@ -22,9 +22,12 @@ class Root extends Sprite {
 		assets=new AssetManager();
 		assets.enqueue("assets/Ninja.png");
 		assets.loadQueue(function onProgress(ratio:Float) {
-				if(ratio==1){
+				// as assets get loaded, ratio gets updated. can be used for progress bar.
+				if (ratio == 1) {
+					// loading animation
 					Starling.juggler.tween(startup.loadingBitmap, 2.0, {transition:Transitions.EASE_OUT, delay:5.0, alpha: 0, onComplete: function(){
-							startup.removeChild(startup.loadingBitmap);
+						// finished loading	
+						startup.removeChild(startup.loadingBitmap);
 
 							ninja = new Image(Root.assets.getTexture("Ninja"));
 							ninja.touchable = true; // touchable must to true inorder for the Object to receive Touch Events
