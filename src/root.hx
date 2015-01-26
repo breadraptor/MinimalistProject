@@ -27,7 +27,7 @@ class Root extends Sprite {
 				// as assets get loaded, ratio gets updated. can be used for progress bar.
 				if (ratio == 1) {
 					// loading completed animation
-					Starling.juggler.tween(startup.loadingBitmap, 2.0, {transition:Transitions.EASE_OUT, delay:5.0, alpha: 0, onComplete: function(){
+					Starling.juggler.tween(startup.loadingBitmap, 2.0, {transition:Transitions.EASE_OUT, delay:0, alpha: 0, onComplete: function(){
 						// cleaning up the loadingScreen after it has already faded	
 						startup.removeChild(startup.loadingBitmap);
 							timer = new Quad(20,20,0x000000);
