@@ -6,15 +6,17 @@ import starling.events.*;
 import starling.display.Quad;
 import starling.animation.Transitions;
 import starling.text.TextField;
+import flash.system.System;
 import Math.random;
 
 class Root extends Sprite {
 	public static var assets:AssetManager;
 	public var ninja:Image;
-	public var timer:Quad;
+	public var quad:Quad;
 	public var lastTouch:Float=1.0;
 	public var score=0;
 	public var scoreTxt:TextField;
+	public var endGame:TextField;
 
 	public function new() {
 		super();
@@ -30,11 +32,11 @@ class Root extends Sprite {
 					Starling.juggler.tween(startup.loadingBitmap, 2.0, {transition:Transitions.EASE_OUT, delay:0, alpha: 0, onComplete: function(){
 						// cleaning up the loadingScreen after it has already faded	
 						startup.removeChild(startup.loadingBitmap);
-							timer = new Quad(20,20,0x000000);
-							timer.touchable = false;
-							timer.x = (flash.Lib.current.stage.stageWidth/2)-10;
-							timer.y = (flash.Lib.current.stage.stageHeight/2)-10;
-							addChild(timer);
+							quad = new Quad(20,20,0xababab);
+							quad.touchable = false;
+							quad.x = (flash.Lib.current.stage.stageWidth/2)-10;
+							quad.y = (flash.Lib.current.stage.stageHeight/2)-10;
+							addChild(quad);
 
 							ninja = new Image(Root.assets.getTexture("Ninja"));
 							ninja.touchable = true; // touchable must to true inorder for the Object to receive Touch Events
@@ -62,14 +64,23 @@ class Root extends Sprite {
 				scoreTxt.text=score+"";
 				lastTouch=touch.timestamp;
 
-				timer.scaleX+=2;
-				timer.scaleY+=2;
-				timer.x = (flash.Lib.current.stage.stageWidth/2)-(timer.width/2);
-				timer.y = (flash.Lib.current.stage.stageHeight/2)-(timer.height/2);
+				quad.scaleX+=8;
+				quad.scaleY+=8;
+				quad.x = (flash.Lib.current.stage.stageWidth/2)-(quad.width/2);
+				quad.y = (flash.Lib.current.stage.stageHeight/2)-(quad.height/2);
 
 				touch.target.x=random()*(flash.Lib.current.stage.stageWidth-touch.target.width);
 				touch.target.y=random()*(flash.Lib.current.stage.stageHeight-touch.target.height);
 				// ^ Jumps the "Ninja" to a Random Point on the Screen
+
+				if(quad.width >= flash.Lib.current.stage.stageWidth){
+					endGame = new TextField(640,640, "Game Over!\n Your Time was " + (flash.Lib.getTimer()/1000) + " seconds!");
+					endGame.hAlign = "center";
+					endGame.vAlign = "center";
+					addChild(endGame);
+				}
+
+
 			}
 		}
 	}
