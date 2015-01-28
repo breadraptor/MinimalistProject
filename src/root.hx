@@ -8,6 +8,7 @@ import starling.animation.Transitions;
 import starling.text.TextField;
 import flash.system.System;
 import Math.random;
+import starling.utils.Color;
 
 class Root extends Sprite {
 	public static var assets:AssetManager;
@@ -17,6 +18,7 @@ class Root extends Sprite {
 	public var score=0;
 	public var scoreTxt:TextField;
 	public var endGame:TextField;
+	var colors:Array<UInt> = [Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN, Color.PURPLE, Color.AQUA, Color.LIME, Color.FUCHSIA];
 
 	public function new() {
 		super();
@@ -68,6 +70,7 @@ class Root extends Sprite {
 				quad.scaleY+=8;
 				quad.x = (flash.Lib.current.stage.stageWidth/2)-(quad.width/2);
 				quad.y = (flash.Lib.current.stage.stageHeight/2)-(quad.height/2);
+				quad.color = colors[Math.floor(random()*colors.length)];
 
 				touch.target.x=random()*(flash.Lib.current.stage.stageWidth-touch.target.width);
 				touch.target.y=random()*(flash.Lib.current.stage.stageHeight-touch.target.height);
