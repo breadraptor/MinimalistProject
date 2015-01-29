@@ -30,7 +30,7 @@ class Root extends Sprite {
 
 	public function start(startup:Startup){
 		assets=new AssetManager();
-		assets.enqueue("assets/Ninja.png", "assets/Ninja_2.png");
+		assets.enqueue("assets/Ninja.png", "assets/Ninja_2.png", "assets/smoke.png");
 		assets.loadQueue(function onProgress(ratio:Float) {
 				// as assets get loaded, ratio gets updated. can be used for progress bar.
 				if (ratio == 1) {
@@ -95,21 +95,27 @@ class Ninja extends Sprite {
 	private var ow:Image;
 	private var norm:Image;
 	
+	private var smoke:Image;
+	
 	public function new() {
 		super();
 	
 		// the two ninja states
 		norm = new Image(Root.assets.getTexture("Ninja"));
 		ow = new Image(Root.assets.getTexture("Ninja_2"));
+		smoke = new Image(Root.assets.getTexture("smoke"));
 		
 		addChild(norm);
 		addChild(ow);
+		addChild(smoke);
 		ow.visible = false;
-			
+		
 		touchable = true; // touchable must to true inorder for the Object to receive Touch Events
 		useHandCursor = true;
 		x = random()*(flash.Lib.current.stage.stageWidth - width);
 		y = random()*(flash.Lib.current.stage.stageHeight - height);
+		
+		newSmoke();
 	}
 	
 	// Should only be called once
@@ -136,6 +142,18 @@ class Ninja extends Sprite {
 			ow.visible = false;
 			x = random()*(flash.Lib.current.stage.stageWidth - width);
 			y = random()*(flash.Lib.current.stage.stageHeight - height);
+			newSmoke();
+			}
+		});
+	}
+	
+	private function newSmoke() {
+		smoke.alpha = 0;
+		Starling.juggler.tween(smoke, .1, {
+			transition:Transitions.EASE_OUT, delay:0, alpha: 1, onComplete: function() {
+				Starling.juggler.tween(smoke, .8, {
+					transition:Transitions.EASE_OUT, delay:0, alpha: 0
+				});
 			}
 		});
 	}
