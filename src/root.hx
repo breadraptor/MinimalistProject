@@ -7,6 +7,8 @@ import starling.display.Quad;
 import starling.animation.Transitions;
 import starling.text.TextField;
 import flash.system.System;
+import flash.media.Sound;
+import flash.net.URLRequest;
 import Math.random;
 import starling.utils.Color;
 import starling.textures.Texture;
@@ -14,6 +16,8 @@ import starling.animation.Tween;
 
 class Root extends Sprite {
 	public static var assets:AssetManager;
+	
+	public var clickSound:Sound;
 	
 	public var ninja:Sprite;
 	public var ninja_ow:Image;
@@ -66,12 +70,15 @@ class Root extends Sprite {
 					}});
 				}
 			});
+		clickSound = new Sound();
+		clickSound.load(new URLRequest("assets/click.mp3"));
 	}
 
 	private function onTouch(e:TouchEvent){
 		var touch:Touch = e.getTouch(stage);
 		if(touch!=null){
 			if(touch.phase == TouchPhase.BEGAN) {
+				clickSound.play();
 				score+=Math.ceil((lastTouch/flash.Lib.getTimer())*4);
 				// ^ Supposed to reward more points for fast Clicks
 				lastTouch=flash.Lib.getTimer();
