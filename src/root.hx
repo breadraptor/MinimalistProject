@@ -4,6 +4,7 @@ import starling.display.Image;
 import starling.core.Starling;
 import starling.events.*;
 import starling.display.Quad;
+import starling.display.QuadBatch;
 import starling.animation.Transitions;
 import starling.text.TextField;
 import flash.system.System;
@@ -16,21 +17,22 @@ import starling.animation.Tween;
 
 class Root extends Sprite {
 	public static var assets:AssetManager;
-	
 	public var ninja:Ninja;
-	
+	public var restart:Image;	
 	public var lastTouch:Float=1.0;
 	public var score=0;
 	public var scoreTxt:TextField;
 	public var endGame:TextField;
-
+	public var t1:Float = 0;
+	public var t2:Float = 0;
+	public var t3:Float = 0;
 	public function new() {
 		super();
 	}
 
 	public function start(startup:Startup){
 		assets=new AssetManager();
-		assets.enqueue("assets/Ninja.png", "assets/Ninja_2.png", "assets/smoke.png");
+		assets.enqueue("assets/Ninja.png", "assets/Ninja_2.png", "assets/smoke.png", "assets/blue_box.png");
 		assets.loadQueue(function onProgress(ratio:Float) {
 				// as assets get loaded, ratio gets updated. can be used for progress bar.
 				if (ratio == 1) {
@@ -38,7 +40,8 @@ class Root extends Sprite {
 					Starling.juggler.tween(startup.loadingBitmap, 2.0, {transition:Transitions.EASE_OUT, delay:0, alpha: 0, onComplete: function(){
 						// cleaning up the loadingScreen after it has already faded	
 						startup.removeChild(startup.loadingBitmap);
-						
+						t1 = (flash.Lib.getTimer()/1000);
+
 						addChild(Background.getFirstQuad());
 
 						Ninja.init();
@@ -81,10 +84,40 @@ class Root extends Sprite {
 				addChild(endGame);
 			}});
 			Trying to get a white diamond behind the Game Over Text*/
-			endGame = new TextField(640,640, "You Win!\n Your Time was " + (flash.Lib.getTimer()/1000) + " seconds!");
+			t2 = (flash.Lib.getTimer()/1000);
+			t3 = Math.round((t2 - t1)*100)/100.0;
+			endGame = new TextField(640,640, "You Win!\n Your Time was " + (t3) + " seconds!");
 			endGame.hAlign = "center";
 			endGame.vAlign = "center";
 			addChild(endGame);
+
+			restart = new Image(Root.assets.getTexture("blue_box"));
+			restart.touchable = true;
+			restart.addEventListener("touch", touchRestart);
+			restart.y = 360;
+			restart.x = 310;
+			addChild(restart);
+		}
+	}
+		private function touchRestart(e:TouchEvent){
+		var touch:Touch = e.getTouch(stage);
+		if(touch != null){
+			if(touch.phase == TouchPhase.BEGAN){
+				removeChildren();
+				score= 0;
+				lastTouch = 1.0;
+								t1 = Math.round(flash.Lib.getTimer()/1000);
+					// loading completed animation
+						// cleaning up the loadingScreen after it has already faded							
+						addChild(Background.getFirstQuad());
+
+						Ninja.init();
+						
+						ninja = new Ninja();
+						ninja.addEventListener("touch", onTouch); // Assigning the "touch" Event to onTouch
+						addChild(ninja);
+
+			}
 		}
 	}
 }
@@ -165,6 +198,7 @@ class Background {
 	
 	public static function getFirstQuad():Quad {
 		// background box
+
 		var quad = new Quad(20,20,0xababab);
 		quad.touchable = false;
 		quad.x = (flash.Lib.current.stage.stageWidth/2)-10;
