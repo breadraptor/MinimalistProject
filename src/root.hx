@@ -207,7 +207,6 @@ class Ninja extends Sprite {
 		// animation for jumping down. On complete, move ninja to new location
 		Starling.juggler.tween(this, .2, { transition: Transitions.EASE_IN,
 			y: this.y + 3, delay: .25, onComplete: function() {
-			norm.visible = true;
 			ow.visible = false;
 			moveToRandomPoint();
 			}
@@ -226,6 +225,7 @@ class Ninja extends Sprite {
 		smoke.alpha = 0;
 		Starling.juggler.tween(smoke, .1, {
 			transition:Transitions.EASE_OUT, delay:0, alpha: 1, onComplete: function() {
+				norm.visible = true;
 				Starling.juggler.tween(smoke, .8, {
 					transition:Transitions.EASE_OUT, delay:0, alpha: 0
 				});
