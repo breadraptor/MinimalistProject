@@ -184,11 +184,11 @@ class Ninja extends Sprite {
 		ow.visible = true;
 
 		// animation for jumping up
-		Starling.juggler.tween(this, .25, { 
+		Starling.juggler.tween(this, .25, { transition: Transitions.EASE_OUT,
 		y: this.y - 10});
 		
 		// animation for jumping down. On complete, move ninja to new location
-		Starling.juggler.tween(this, .2, {
+		Starling.juggler.tween(this, .2, { transition: Transitions.EASE_IN,
 			y: this.y + 3, delay: .25, onComplete: function() {
 			norm.visible = true;
 			ow.visible = false;
