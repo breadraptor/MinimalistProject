@@ -28,7 +28,7 @@ class Root extends Sprite {
 	public var t1:Float = 0;
 	public var t2:Float = 0;
 	public var t3:Float = 0;
-	public var scoreMax = 10000;	//The highest score you can get per click. The higher the scoreMax, the more variance you get between box sizes
+	public var scoreMax = 2000;	//The highest score you can get per click. The higher the scoreMax, the more variance you get between box sizes
 	public var scoreMin = 0;		//The lowest score you can get per click.
 	public var growthRate = 20;	//The lower the growth rate, the faster the game ends
 	public function new() {
@@ -126,21 +126,16 @@ class Root extends Sprite {
 				removeChildren();
 				score= 0;
 				lastTouch = flash.Lib.getTimer();
-								t1 = Math.round(flash.Lib.getTimer()/1000);
-					// loading completed animation
-						// cleaning up the loadingScreen after it has already faded	
+				t1 = Math.round(flash.Lib.getTimer()/1000);
 						
-						background.resetCurrentSize();
-						addChild(background.getNewQuad(20));
-
-						Ninja.init();
-						
-						ninja = new Ninja();
-						ninja.addEventListener("touch", onTouch); // Assigning the "touch" Event to onTouch
-						addChild(ninja);
-						decoy = new Ninja();
-						decoy.addEventListener("touch", touchDecoy); 
-						addChild(decoy);
+				background.resetCurrentSize();
+				addChild(background.getNewQuad(20));
+				
+				addChild(ninja);
+				ninja.moveToRandomPoint();
+				
+				addChild(decoy);
+				decoy.moveToRandomPoint();
 
 			}
 	
@@ -167,6 +162,8 @@ class Ninja extends Sprite {
 	
 	private var smoke:Image;
 	
+	private static var initialized:Bool = false;
+	
 	public function new() {
 		super();
 	
@@ -182,18 +179,18 @@ class Ninja extends Sprite {
 		
 		touchable = true; // touchable must to true inorder for the Object to receive Touch Events
 		useHandCursor = true;
-		x = random()*(flash.Lib.current.stage.stageWidth - width);
-		y = random()*(flash.Lib.current.stage.stageHeight - height);
-		
-		newSmoke();
+		moveToRandomPoint();
 	}
 	
 	// Should only be called once
 	public static function init() {
-		clickSound = new Sound();
-		clickSound.load(new URLRequest("assets/click.mp3"));
-		decoySound = new Sound();
-		decoySound.load(new URLRequest("assets/Computer Error-SoundBible.com-399240903.mp3"));
+		if (!initialized) {
+			clickSound = new Sound();
+			clickSound.load(new URLRequest("assets/click.mp3"));
+			decoySound = new Sound();
+			decoySound.load(new URLRequest("assets/Computer Error-SoundBible.com-399240903.mp3"));
+			initialized = true;
+		}
 	}
 	
 	public function clicked() {
@@ -212,22 +209,20 @@ class Ninja extends Sprite {
 			y: this.y + 3, delay: .25, onComplete: function() {
 			norm.visible = true;
 			ow.visible = false;
-			x = random()*(flash.Lib.current.stage.stageWidth - width);
-			y = random()*(flash.Lib.current.stage.stageHeight - height);
-			newSmoke();
+			moveToRandomPoint();
 			}
 		});
 	}
 
 	public function clickedDecoy(){
 		decoySound.play();
-		x = random()*(flash.Lib.current.stage.stageWidth - width);
-		y = random()*(flash.Lib.current.stage.stageHeight - height);
-		newSmoke();
+		moveToRandomPoint();
 
 	}
 	
-	private function newSmoke() {
+	public function moveToRandomPoint() {
+		x = random()*(flash.Lib.current.stage.stageWidth - width);
+		y = random()*(flash.Lib.current.stage.stageHeight - height);
 		smoke.alpha = 0;
 		Starling.juggler.tween(smoke, .1, {
 			transition:Transitions.EASE_OUT, delay:0, alpha: 1, onComplete: function() {
