@@ -194,6 +194,7 @@ class Ninja extends Sprite {
 	}
 	
 	public function clicked() {
+		touchable = false;
 		clickSound.play();
 	
 		// the ninja has been clicked, so his face turns red
@@ -209,6 +210,7 @@ class Ninja extends Sprite {
 			y: this.y + 3, delay: .25, onComplete: function() {
 			ow.visible = false;
 			moveToRandomPoint();
+			touchable = true;
 			}
 		});
 	}
