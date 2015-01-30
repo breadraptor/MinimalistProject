@@ -19,6 +19,7 @@ class Root extends Sprite {
 	public static var assets:AssetManager;
 	public var ninja:Ninja;
 	public var restart:Image;	
+	public var background:Background;
 	public var lastTouch:Float=1.0;
 	public var score=0;
 	public var scoreTxt:TextField;
@@ -26,6 +27,9 @@ class Root extends Sprite {
 	public var t1:Float = 0;
 	public var t2:Float = 0;
 	public var t3:Float = 0;
+	public var scoreMax = 10000;	//The highest score you can get per click. The higher the scoreMax, the more variance you get between box sizes
+	public var scoreMin = 0;		//The lowest score you can get per click.
+	public var growthRate = 20;	//The lower the growth rate, the faster the game ends
 	public function new() {
 		super();
 	}
@@ -42,13 +46,16 @@ class Root extends Sprite {
 						startup.removeChild(startup.loadingBitmap);
 						t1 = (flash.Lib.getTimer()/1000);
 
-						addChild(Background.getFirstQuad());
+						background = new Background();
+						addChild(background.getNewQuad(20));
 
 						Ninja.init();
 						
 						ninja = new Ninja();
 						ninja.addEventListener("touch", onTouch); // Assigning the "touch" Event to onTouch
 						addChild(ninja);
+						
+						lastTouch = flash.Lib.getTimer();	//Start timer when ninja spawns for the first time
 					}});
 				}
 			});
@@ -58,13 +65,23 @@ class Root extends Sprite {
 		var touch:Touch = e.getTouch(stage);
 		if(touch!=null){
 			if(touch.phase == TouchPhase.BEGAN) {
-				score+=Math.ceil((lastTouch/flash.Lib.getTimer())*4);
+				var addScore = scoreMax - Math.ceil(flash.Lib.getTimer() - lastTouch);
+				if (addScore < scoreMin) {
+					addScore = scoreMin;
+				}
+				
+				score += addScore;
 				// ^ Supposed to reward more points for fast Clicks
+				
+				var growth = Math.ceil((scoreMax - addScore) / growthRate);
+				
+				trace(growth);
+				
 				lastTouch=flash.Lib.getTimer();
 				
 				ninja.clicked();
 
-				var quad = Background.getNextQuad(score);
+				var quad = background.getNewQuad(growth);
 				addChildAt(quad,0);
 
 				checkGameOver(quad);
@@ -78,7 +95,7 @@ class Root extends Sprite {
 			quad.alpha=0;
 			addChild(quad);
 			Starling.juggler.tween(quad, 1.5, {transition:Transitions.EASE_OUT, delay:0, alpha: 1, onComplete: function(){
-				endGame = new TextField(640,640, "Game Over!\n Your Time was " + (flash.Lib.getTimer()/1000) + " seconds!");
+				endGame = new TextField(640,1000, "Game Over!\n Your Time was " + (flash.Lib.getTimer()/1000) + " seconds!\n Your score was " + score);
 				endGame.hAlign = "center";
 				endGame.vAlign = "center";
 				addChild(endGame);
@@ -86,7 +103,7 @@ class Root extends Sprite {
 			Trying to get a white diamond behind the Game Over Text*/
 			t2 = (flash.Lib.getTimer()/1000);
 			t3 = Math.round((t2 - t1)*100)/100.0;
-			endGame = new TextField(640,640, "You Win!\n Your Time was " + (t3) + " seconds!");
+			endGame = new TextField(640,1000, "Game Over!\n Your Time was " + (flash.Lib.getTimer()/1000) + " seconds!\n Your score was " + score);
 			endGame.hAlign = "center";
 			endGame.vAlign = "center";
 			addChild(endGame);
@@ -105,11 +122,13 @@ class Root extends Sprite {
 			if(touch.phase == TouchPhase.BEGAN){
 				removeChildren();
 				score= 0;
-				lastTouch = 1.0;
+				lastTouch = flash.Lib.getTimer();
 								t1 = Math.round(flash.Lib.getTimer()/1000);
 					// loading completed animation
-						// cleaning up the loadingScreen after it has already faded							
-						addChild(Background.getFirstQuad());
+						// cleaning up the loadingScreen after it has already faded	
+						
+						background.resetCurrentSize();
+						addChild(background.getNewQuad(20));
 
 						Ninja.init();
 						
@@ -192,28 +211,23 @@ class Ninja extends Sprite {
 	}
 }
 
-// Static class to generate backgrounds
 class Background {
 	private static var colors:Array<UInt> = [Color.RED, Color.MAROON, Color.YELLOW, Color.BLUE, Color.NAVY, Color.GREEN, Color.PURPLE, Color.AQUA, Color.FUCHSIA];
 	
-	public static function getFirstQuad():Quad {
-		// background box
-
-		var quad = new Quad(20,20,0xababab);
-		quad.touchable = false;
-		quad.x = (flash.Lib.current.stage.stageWidth/2)-10;
-		quad.y = (flash.Lib.current.stage.stageHeight/2)-10;
-		quad.color = colors[Math.floor(random()*colors.length)];
-		return quad;
-	}
+	private var currentSize:Int = 0;
 	
-	public static function getNextQuad(score:Int):Quad {
-		var quad = new Quad(20,20,0xffffff);
-		quad.scaleX+=score;
-		quad.scaleY+=score;
+	public function new() {}
+	
+	public function getNewQuad(growth:Int):Quad {
+		currentSize += growth;
+		var quad = new Quad(currentSize,currentSize,0xffffff);
 		quad.x = (flash.Lib.current.stage.stageWidth/2)-(quad.width/2);
 		quad.y = (flash.Lib.current.stage.stageHeight/2)-(quad.height/2);
 		quad.color = colors[Math.floor(random()*colors.length)];
 		return quad;
+	}
+	
+	public function resetCurrentSize() {
+		currentSize = 0;
 	}
 }
