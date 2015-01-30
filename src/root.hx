@@ -75,8 +75,6 @@ class Root extends Sprite {
 				
 				var growth = Math.ceil((scoreMax - addScore) / growthRate);
 				
-				trace(growth);
-				
 				lastTouch=flash.Lib.getTimer();
 				
 				ninja.clicked();
