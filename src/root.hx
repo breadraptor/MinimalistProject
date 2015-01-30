@@ -19,7 +19,7 @@ class Root extends Sprite {
 	public static var assets:AssetManager;
 	public var ninja:Ninja;
 	public var decoy:Ninja;
-	public var restart:Image;	
+	public var restart:RestartButton;	
 	public var background:Background;
 	public var lastTouch:Float=1.0;
 	public var score=0;
@@ -31,13 +31,14 @@ class Root extends Sprite {
 	public var scoreMax = 2000;	//The highest score you can get per click. The higher the scoreMax, the more variance you get between box sizes
 	public var scoreMin = 0;		//The lowest score you can get per click.
 	public var growthRate = 20;	//The lower the growth rate, the faster the game ends
+	
 	public function new() {
 		super();
 	}
 
 	public function start(startup:Startup){
 		assets=new AssetManager();
-		assets.enqueue("assets/Ninja.png", "assets/Ninja_2.png", "assets/smoke.png", "assets/blue_box.png");
+		assets.enqueue("assets/Ninja.png", "assets/Ninja_2.png", "assets/smoke.png", "assets/restart_button_unclicked.png", "assets/restart_button_clicked.png");
 		assets.loadQueue(function onProgress(ratio:Float) {
 				// as assets get loaded, ratio gets updated. can be used for progress bar.
 				if (ratio == 1) {
@@ -67,7 +68,7 @@ class Root extends Sprite {
 
 	private function onTouch(e:TouchEvent){
 		var touch:Touch = e.getTouch(stage);
-		if(touch!=null){
+		if(touch != null){
 			if(touch.phase == TouchPhase.BEGAN) {
 				var addScore = scoreMax - Math.ceil(flash.Lib.getTimer() - lastTouch);
 				if (addScore < scoreMin) {
@@ -111,18 +112,19 @@ class Root extends Sprite {
 			endGame.vAlign = "center";
 			addChild(endGame);
 
-			restart = new Image(Root.assets.getTexture("blue_box"));
-			restart.touchable = true;
+			restart = new RestartButton();
 			restart.addEventListener("touch", touchRestart);
-			restart.y = 360;
-			restart.x = 310;
 			addChild(restart);
 		}
 	}
-		private function touchRestart(e:TouchEvent){
+	
+	private function touchRestart(e:TouchEvent){
 		var touch:Touch = e.getTouch(stage);
 		if(touch != null){
-			if(touch.phase == TouchPhase.BEGAN){
+			if (touch.phase == TouchPhase.BEGAN) {
+				restart.clicked();
+			}
+			if(touch.phase == TouchPhase.ENDED){
 				removeChildren();
 				score= 0;
 				lastTouch = flash.Lib.getTimer();
@@ -136,9 +138,7 @@ class Root extends Sprite {
 				
 				addChild(decoy);
 				decoy.moveToRandomPoint();
-
 			}
-	
 		}
 	}
 
@@ -216,7 +216,6 @@ class Ninja extends Sprite {
 	public function clickedDecoy(){
 		decoySound.play();
 		moveToRandomPoint();
-
 	}
 	
 	public function moveToRandomPoint() {
@@ -231,6 +230,32 @@ class Ninja extends Sprite {
 				});
 			}
 		});
+	}
+}
+
+class RestartButton extends Sprite {
+	private var unclickedImage:Image;
+	private var clickedImage:Image;
+	
+	public function new() {
+		super();
+		
+		unclickedImage = new Image(Root.assets.getTexture("restart_button_unclicked"));
+		addChild(unclickedImage);
+		clickedImage = new Image(Root.assets.getTexture("restart_button_clicked"));
+		addChild(clickedImage);
+		
+		touchable = true;
+		
+		y = 360;
+		x = 310;
+		
+		clickedImage.visible = false;
+	}
+	
+	public function clicked() {
+		unclickedImage.visible = false;
+		clickedImage.visible = true;
 	}
 }
 
