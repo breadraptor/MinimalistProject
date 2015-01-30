@@ -18,6 +18,7 @@ import starling.animation.Tween;
 class Root extends Sprite {
 	public static var assets:AssetManager;
 	public var ninja:Ninja;
+	public var decoy:Ninja;
 	public var restart:Image;	
 	public var background:Background;
 	public var lastTouch:Float=1.0;
@@ -54,6 +55,9 @@ class Root extends Sprite {
 						ninja = new Ninja();
 						ninja.addEventListener("touch", onTouch); // Assigning the "touch" Event to onTouch
 						addChild(ninja);
+						decoy = new Ninja();
+						decoy.addEventListener("touch", touchDecoy); 
+						addChild(decoy);
 						
 						lastTouch = flash.Lib.getTimer();	//Start timer when ninja spawns for the first time
 					}});
@@ -78,6 +82,7 @@ class Root extends Sprite {
 				lastTouch=flash.Lib.getTimer();
 				
 				ninja.clicked();
+				decoy.clicked();
 
 				var quad = background.getNewQuad(growth);
 				addChildAt(quad,0);
@@ -133,7 +138,21 @@ class Root extends Sprite {
 						ninja = new Ninja();
 						ninja.addEventListener("touch", onTouch); // Assigning the "touch" Event to onTouch
 						addChild(ninja);
+						decoy = new Ninja();
+						decoy.addEventListener("touch", touchDecoy); 
+						addChild(decoy);
 
+			}
+	
+		}
+	}
+
+	private function touchDecoy(e:TouchEvent){
+		var touch:Touch = e.getTouch(stage);
+		if(touch != null){
+			if(touch.phase == TouchPhase.BEGAN){
+				decoy.clickedDecoy();
+				
 			}
 		}
 	}
@@ -141,6 +160,7 @@ class Root extends Sprite {
 
 class Ninja extends Sprite {
 	private static var clickSound:Sound;
+	private static var decoySound:Sound;
 	
 	private var ow:Image;
 	private var norm:Image;
@@ -172,6 +192,8 @@ class Ninja extends Sprite {
 	public static function init() {
 		clickSound = new Sound();
 		clickSound.load(new URLRequest("assets/click.mp3"));
+		decoySound = new Sound();
+		decoySound.load(new URLRequest("assets/Computer Error-SoundBible.com-399240903.mp3"));
 	}
 	
 	public function clicked() {
@@ -195,6 +217,14 @@ class Ninja extends Sprite {
 			newSmoke();
 			}
 		});
+	}
+
+	public function clickedDecoy(){
+		decoySound.play();
+		x = random()*(flash.Lib.current.stage.stageWidth - width);
+		y = random()*(flash.Lib.current.stage.stageHeight - height);
+		newSmoke();
+
 	}
 	
 	private function newSmoke() {
