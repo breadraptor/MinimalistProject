@@ -31,6 +31,7 @@ class Root extends Sprite {
 	public var scoreMax = 2000;	//The highest score you can get per click. The higher the scoreMax, the more variance you get between box sizes
 	public var scoreMin = 0;		//The lowest score you can get per click.
 	public var growthRate = 20;	//The lower the growth rate, the faster the game ends
+	public var startTime = 0;
 	
 	public function new() {
 		super();
@@ -57,10 +58,12 @@ class Root extends Sprite {
 						ninja.addEventListener("touch", onTouch); // Assigning the "touch" Event to onTouch
 						addChild(ninja);
 						decoy = new Ninja();
-						decoy.addEventListener("touch", touchDecoy); 
+						decoy.addEventListener("touch", touchDecoy);
+						decoy.useHandCursor=false; 
 						addChild(decoy);
 						
 						lastTouch = flash.Lib.getTimer();	//Start timer when ninja spawns for the first time
+						startTime = flash.Lib.getTimer();
 					}});
 				}
 			});
@@ -94,20 +97,15 @@ class Root extends Sprite {
 	}
 	private function checkGameOver(quad:Quad) {
 		if(quad.width >= flash.Lib.current.stage.stageWidth){
-			/*var quad = new Quad(640, 640, 0x000000);
-			quad.rotation=(3.14/2);
-			quad.alpha=0;
+			var quad = new Quad(300, 300, 0xffffff);
+			quad.x = 320;
+			quad.y = 120;
+			quad.rotation=(Math.PI/4);
 			addChild(quad);
-			Starling.juggler.tween(quad, 1.5, {transition:Transitions.EASE_OUT, delay:0, alpha: 1, onComplete: function(){
-				endGame = new TextField(640,1000, "Game Over!\n Your Time was " + (flash.Lib.getTimer()/1000) + " seconds!\n Your score was " + score);
-				endGame.hAlign = "center";
-				endGame.vAlign = "center";
-				addChild(endGame);
-			}});
-			Trying to get a white diamond behind the Game Over Text*/
+
 			t2 = (flash.Lib.getTimer()/1000);
 			t3 = Math.round((t2 - t1)*100)/100.0;
-			endGame = new TextField(640,1000, "Game Over!\n Your Time was " + (flash.Lib.getTimer()/1000) + " seconds!\n Your score was " + score);
+			endGame = new TextField(640,640, "Game Over!\n Your Time was " + ((flash.Lib.getTimer()-startTime)/1000) + " seconds!\n Your score was " + score);
 			endGame.hAlign = "center";
 			endGame.vAlign = "center";
 			addChild(endGame);
@@ -128,6 +126,7 @@ class Root extends Sprite {
 				removeChildren();
 				score= 0;
 				lastTouch = flash.Lib.getTimer();
+				startTime = flash.Lib.getTimer();
 				t1 = Math.round(flash.Lib.getTimer()/1000);
 						
 				background.resetCurrentSize();
@@ -250,7 +249,7 @@ class RestartButton extends Sprite {
 		touchable = true;
 		
 		y = 360;
-		x = 310;
+		x = 270;
 		
 		clickedImage.visible = false;
 	}
@@ -262,8 +261,6 @@ class RestartButton extends Sprite {
 }
 
 class Background {
-	private static var colors:Array<UInt> = [Color.RED, Color.MAROON, Color.YELLOW, Color.BLUE, Color.NAVY, Color.GREEN, Color.PURPLE, Color.AQUA, Color.FUCHSIA];
-	
 	private var currentSize:Int = 0;
 	
 	public function new() {}
@@ -273,7 +270,7 @@ class Background {
 		var quad = new Quad(currentSize,currentSize,0xffffff);
 		quad.x = (flash.Lib.current.stage.stageWidth/2)-(quad.width/2);
 		quad.y = (flash.Lib.current.stage.stageHeight/2)-(quad.height/2);
-		quad.color = colors[Math.floor(random()*colors.length)];
+		quad.color = Color.argb(1, Math.ceil(random()*256), Math.ceil(random()*256), Math.ceil(random()*256));
 		return quad;
 	}
 	
